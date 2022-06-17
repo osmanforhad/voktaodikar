@@ -43,8 +43,16 @@ class UserController extends Controller
         if (auth('sanctum')->check()) {
             $currentUser = User::find($id);
             if ($currentUser) {
+                $currentUser->name = $request->input('name');
+                $currentUser->phone = $request->input('phone');
+                $currentUser->nid = $request->input('nid');
                 $currentUser->email = $request->input('email');
                 $currentUser->gender = $request->input('gender');
+                $currentUser->birth_date = $request->input('birth_date');
+                $currentUser->father_name = $request->input('father_name');
+                $currentUser->mother_name = $request->input('mother_name');
+                $currentUser->present_address = $request->input('present_address');
+                $currentUser->permanent_address = $request->input('permanent_address');
                 $currentUser->save();
                 return response()->json([
                     'status' => 200,
