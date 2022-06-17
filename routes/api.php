@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\User\AuthController;
+use App\Http\Controllers\API\User\ComplainController;
+use App\Http\Controllers\API\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +22,13 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::post('logout', [AuthController::class, 'logout']);
+     Route::get('/profile', [UserController::class, 'profileinfo']);
+    Route::get('/edit_profile/{id}', [UserController::class, 'editprofile']);
+    Route::post('/update_profile/{id}', [UserController::class, 'updateprofile']);
+
+    Route::post('/create_complain', [ComplainController::class, 'createcomplain']);
+
+    Route::post('/logout', [AuthController::class, 'logout']);
 
 });
 
