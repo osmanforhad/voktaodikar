@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\User\AuthController;
+use App\Http\Controllers\API\User\CaseSummeryController;
 use App\Http\Controllers\API\User\ComplainController;
 use App\Http\Controllers\API\User\UserController;
 use Illuminate\Http\Request;
@@ -27,6 +28,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/update_profile/{id}', [UserController::class, 'updateprofile']);
 
     Route::post('/create_complain', [ComplainController::class, 'createcomplain']);
+
+    Route::get('/pending_case', [CaseSummeryController::class, 'pendingCase']);
+    Route::get('/previous_case', [CaseSummeryController::class, 'previousCase']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
