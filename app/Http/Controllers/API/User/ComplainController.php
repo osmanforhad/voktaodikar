@@ -10,7 +10,8 @@ use Carbon\Carbon;
 
 class ComplainController extends Controller
 {
-    public function createcomplain(Request $request){
+    public function createcomplain(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'phone' => 'required',
@@ -27,23 +28,20 @@ class ComplainController extends Controller
             'division_id' => 'required',
         ]);
 
-        if($validator->fails())
-        {
+        if ($validator->fails()) {
             return response()->json([
                 'status' => 422,
                 'errors' => $validator->messages(),
             ]);
-        }
-        else {
+        } else {
             //check the user is loggedin or not
-            if(auth('sanctum')->check())
-            {
+            if (auth('sanctum')->check()) {
                 $LoggedinUser_id = auth('sanctum')->user()->id;
 
                 date_default_timezone_set('Asia/Dhaka');
                 $date = Carbon::createFromFormat('F j, Y g:i:a', date('F j, Y g:i:a'));
                 $currentDate = $date->format('F j, Y g:i:a');
-                $generate_case_no = 'vokta_complain'.rand(1111, 9999);
+                $generate_case_no = 'vokta_complain' . rand(1111, 9999);
 
                 $complain = new Complain();
                 $complain->name = $request->input('name');
@@ -53,17 +51,17 @@ class ComplainController extends Controller
                 $complain->email = $request->input('email');
                 $complain->product_name = $request->input('product_name');
                 $complain->organization_name = $request->input('organization_name');
-                if($request->hasFile('product_photo')){
+                if ($request->hasFile('product_photo')) {
                     $file = $request->file('product_photo');
                     $extension = $file->getClientOriginalExtension();
-                    $ProductPhotofileName = time().'.'.$extension;
+                    $ProductPhotofileName = time() . '.' . $extension;
                     $file->move('uploads/product/', $ProductPhotofileName);
                     $complain->product_photo = $ProductPhotofileName;
                 }
-                if($request->hasFile('invoice_photo')){
+                if ($request->hasFile('invoice_photo')) {
                     $file = $request->file('invoice_photo');
                     $extension = $file->getClientOriginalExtension();
-                    $InvoicePhotofileName = time().'.'.$extension;
+                    $InvoicePhotofileName = time() . '.' . $extension;
                     $file->move('uploads/invoice/', $InvoicePhotofileName);
                     $complain->invoice_photo = $InvoicePhotofileName;
                 }
@@ -83,8 +81,7 @@ class ComplainController extends Controller
                     'status' => 200,
                     'message' => 'complain submitted successfully.',
                 ]);
-            }
-            else {
+            } else {
                 return response()->json([
                     'status' => 401,
                     'message' => 'Please Logged in first',
@@ -93,5 +90,29 @@ class ComplainController extends Controller
         }
     }
 
-
+    public function searchComplain($query)
+    {
+        if (auth('sanctum')->check()) {
+            $LoggedinUser_id = auth('sanctum')->user()->id;
+            $searchResult = Complain::where('user_id', $LoggedinUser_id)->where('phone', 'LIKE', $query)
+                ->orWhere('nid', 'LIKE', $query)->orWhere('case_no', 'LIKE', $query)
+                ->orderBy('id', 'DESC')->get();
+            if (count($searchResult)) {
+                return response()->json([
+                    'status' => 200,
+                    'searchResult' => $searchResult,
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 421,
+                    'message' => 'No Record found',
+                ]);
+            }
+        } else {
+            return response()->json([
+                'status' => 401,
+                'message' => 'Please Logged in first',
+            ]);
+        }
+    }
 }
