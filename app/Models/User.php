@@ -23,6 +23,7 @@ class User extends Authenticatable
         'nid',
         'email',
         'password',
+        'role_as',
         'gender',
         'birth_date',
         'father_name',

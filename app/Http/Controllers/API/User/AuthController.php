@@ -32,6 +32,7 @@ class AuthController extends Controller
                 'nid' => $request->input('nid'),
                 'email' => $request->input('email'),
                 'password' => Hash::make($request->input('password')),
+                'role_as' => '1',
             ]);
 
             $token = $user->createToken($user->phone . '_Token')->plainTextToken;
@@ -67,7 +68,14 @@ class AuthController extends Controller
                 ]);
             } else {
 
-                $token = $user->createToken($user->phone . '_Token', [''])->plainTextToken;
+                if($user->role_as == 1) //1= User
+                 {
+                     $role = 'user';
+                    $token = $user->createToken($user->phone . '_userToken', ['server:user'])->plainTextToken;
+                } else {
+                    $role = '';
+                    $token = $user->createToken($user->phone . '_Token', [''])->plainTextToken;
+                }
 
                 return response()->json([
                     'status' => 200,
